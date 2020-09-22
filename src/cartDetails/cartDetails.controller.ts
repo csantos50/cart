@@ -1,30 +1,28 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { MessagePattern } from '@nestjs/microservices';
 import { CartDetailsService } from './cartDetails.service';
 
 @Controller('cartDetails')
 export class CartDetailsController {
     constructor(private CartDetailsService: CartDetailsService) { }
 
-    @Get(':id')
-    async getCartDetails( @Param('id') id: string    ){
+    @MessagePattern('cart')
+    async getCartDetails(id: number ){
         return this.CartDetailsService.getCartDetails(id);
     }
     
-    @Post()
+    @MessagePattern('addproduct')
     async createCart(
-        @Body('card') card: number,
-        @Body('product') product: string,
-        @Body('price') price: number,
-        @Body('qnt') qnt: number,
+        data: any,
     ){
-        return await this.CartDetailsService.addProductToCart(card,product,price,qnt);
+        console.log(data)
+        return await this.CartDetailsService.addProductToCart(data.card,data.product,data.price,data.qnt);
     }
     
-    @Post('delete')
+    @MessagePattern('delete')
     async removeFormCaert(
-        @Body('card') card: number,
-        @Body('product') product: string,
+        data: any,
     ){
-        return await this.CartDetailsService.removeProductFromCart(card,product);
+        return await this.CartDetailsService.removeProductFromCart(data.card,data.product);
     }
 }

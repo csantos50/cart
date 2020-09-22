@@ -16,12 +16,13 @@ export class CartService {
 
 
     async findCart(id: number): Promise<CartEntity> {
-        const Cart = this.repo.findOne(id);
         return this.repo.findOne(id);
     }
-
-
-
+    async findCartUser(user_id: number): Promise<CartEntity> {
+        return this.repo.findOne({
+            user_id:user_id
+        });
+    }
     async createCart(user: number) {
         const newCart=await this.repo.insert({user_id:user});
         return newCart.identifiers;

@@ -2,12 +2,21 @@ import 'dotenv/config'
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Logger } from '@nestjs/common';
+import { Transport } from "@nestjs/microservices"
 
-const port= process.env.PORT || 4000;
+const logger = new Logger('Main')
+
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  await app.listen(port);
-  Logger.log(`Sever running on  http://localhost:${port}`, 'Bootstrap');
+  const port = process.env.PORT ? Number(process.env.PORT) : 8878;
+
+  const app = await NestFactory.createMicroservice(AppModule, {
+    transport: Transport.TCP,
+    options: {
+      host: process.env.HOST,
+      port: port,
+    },
+  });
+  await app.listen(() => console.log('Microservice listening on port:', port));
 }
 bootstrap();
